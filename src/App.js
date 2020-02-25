@@ -4,7 +4,7 @@ import "./App.css";
 import ListaInmuebles from "./components/vistas/ListaInmuebles";
 import AppNavbar from "./components/Layout/AppNavbar";
 import { BrowserRouter as Router,Switch, Route } from "react-router-dom";
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
+import { ThemeProvider as MuiThemeProvider } from "@material-ui/core/styles";
 import theme from "./theme/theme";
 import RegistrarUsuarios from "./components/security/RegistrarUsuarios";
 
@@ -18,15 +18,13 @@ class App extends Component {
 
           <Grid container>
             <Switch>
-              <Route path="/" exact components={ListaInmuebles}></Route>
-              <Route path="/auth/registrarUsuario" exact components={RegistrarUsuarios}></Route>
+              <Route exact path="/" component={ListaInmuebles}></Route>
+              <Route exact path="/auth/registrarUsuario" component={RegistrarUsuarios}></Route>
             </Switch>
           </Grid>
-          <ListaInmuebles />
         </MuiThemeProvider>
       </Router>
     );
-  }
-}
+  }}
 
 export default App;
