@@ -68,17 +68,30 @@ class RegistrarUsuarios extends Component {
         console.log('imprimir usuario', this.state.usuario);
         const {usuario, firebase} = this.state;
 
-        firebase.db
-        .collection("Users")
-        .add(usuario)
-        .then(usuarioAfter => {
-          console.log('Creacion Exitosa', usuarioAfter);
-          this.setState ({
-            usuario: usuarioInicial
+        firebase.auth
+        .createUserWithEmailAndPassword(usuario.email, usuario.password)
+        .then(auth => {
+
+          const usuarioDB = {
+            usuarioid: auth.user.uid,
+            email: usuario.email,
+            nombre: usuario.nombre,
+            apellidos: usuario.apellidos
+          };
+           
+          firebase.db
+          .collection("Users")
+          .add(usuarioDB)
+          .then(usuarioAfter => {
+            console.log('Creacion Exitosa', usuarioAfter);
+            this.props.history.push("/");
+          })
+          .catch(error=> {
+            console.log('error', error);
           })
         })
-        .catch(error=> {
-          console.log('error',error);
+        .catch(error => {
+          console.log(error);
         })
     }
 
@@ -99,7 +112,7 @@ class RegistrarUsuarios extends Component {
                 <TextField name="nombre" onChange={this.onChange} value={this.state.usuario.nombre} fullWidth label="Ingrese su nombre" />
               </Grid>
               <Grid item md={6} xs={12}>
-                <TextField name="apellidos" onChange={this.onChange} value={this.state.usuario.apellido} fullWidth label="Ingrese sus apellidos"
+                <TextField name="apellidos" onChange={this.onChange} value={this.state.usuario.apellidos} fullWidth label="Ingrese sus apellidos"
                 />
               </Grid>
               <Grid item md={6} xs={12}>
