@@ -3,6 +3,9 @@ import {Container,Avatar,Typography,Grid,TextField,Button} from "@material-ui/co
 import LockOutLineIcon from "@material-ui/icons/LockOutlined";
 import {compose} from 'recompose';
 import { consumerFirebase } from "../../server";
+import {crearUsuario} from '../../sesion/actions/sesionAction';
+import {openMensajePantalla} from '../../sesion/actions/snackbarAction'
+import {StateContext} from '../../sesion/store'
 
 const style = {
   paper: {
@@ -25,14 +28,15 @@ const style = {
   }
 };
 
-// const usuarioInicial = {
-//   nombre: '',
-//   apellidos:'',
-//   email:'',
-//   password:''
-// }
+ const usuarioInicial = {
+   nombre: '',
+   apellidos:'',
+   email:'',
+   password:''
+ }
 
 class RegistrarUsuarios extends Component {
+  static contextType = StateContext;
     state= {
         firebase:null,
         usuario:{
@@ -63,36 +67,48 @@ class RegistrarUsuarios extends Component {
         })
     }
 
-    RegistrarUsuarios = e => {
+    RegistrarUsuarios = async e => {
         e.preventDefault();
-        console.log('imprimir usuario', this.state.usuario);
-        const {usuario, firebase} = this.state;
+        const [{sesion}, dispatch] = this.context;
+        const {firebase, usuario} = this.state;
 
-        firebase.auth
-        .createUserWithEmailAndPassword(usuario.email, usuario.password)
-        .then(auth => {
+        let callback = await crearUsuario(dispatch, firebase, usuario);
+        if(callback.status){
+          this.props.history.push("/")
+        }else{
+          openMensajePantalla(dispatch, {
+            open: true,
+            mensaje: callback.mensaje.message
+          })
+        }
+        // console.log('imprimir usuario', this.state.usuario);
+        // const {usuario, firebase} = this.state;
 
-          const usuarioDB = {
-            usuarioid: auth.user.uid,
-            email: usuario.email,
-            nombre: usuario.nombre,
-            apellidos: usuario.apellidos
-          };
+        // firebase.auth
+        // .createUserWithEmailAndPassword(usuario.email, usuario.password)
+        // .then(auth => {
+
+        //   const usuarioDB = {
+        //     usuarioid: auth.user.uid,
+        //     email: usuario.email,
+        //     nombre: usuario.nombre,
+        //     apellidos: usuario.apellidos
+        //   };
            
-          firebase.db
-          .collection("Users")
-          .add(usuarioDB)
-          .then(usuarioAfter => {
-            console.log('Creacion Exitosa', usuarioAfter);
-            this.props.history.push("/");
-          })
-          .catch(error=> {
-            console.log('error', error);
-          })
-        })
-        .catch(error => {
-          console.log(error);
-        })
+        //   firebase.db
+        //   .collection("Users")
+        //   .add(usuarioDB)
+        //   .then(usuarioAfter => {
+        //     console.log('Creacion Exitosa', usuarioAfter);
+        //     this.props.history.push("/");
+        //   })
+        //   .catch(error=> {
+        //     console.log('error', error);
+        //   })
+        // })
+        // .catch(error => {
+        //   console.log(error);
+        // })
     }
 
     

@@ -21,7 +21,7 @@ function App(props) {
 
   const [{ openSnackbar }, dispatch] = useStateValue();
   
-  console.log('openSnacknar=====================>>>', openSnackbar)
+  // console.log('openSnacknar=====================>>>', openSnackbar)
   useEffect(() => {
     firebase.estaIniciado().then(val => {
       setupFirebaseInicial(val);

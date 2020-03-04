@@ -37,7 +37,7 @@ export const crearUsuario = (dispatch, firebase, usuario) => {
                 email: usuario.email,
                 nombre: usuario.nombre,
                 apellidos: usuario.apellidos,
-            }, {marge: true}
+            }, {merge: true}
             )
             .then(doc => {
                 usuario.id = auth.user.uid;
@@ -51,6 +51,7 @@ export const crearUsuario = (dispatch, firebase, usuario) => {
         })
         .catch(error => {
             console.log("error", error);
+            resolve ({status: false, mensaje: error});
         })
     })
 }
@@ -75,3 +76,4 @@ export const salirSesion = (dispatch, firebase) => {
         })
     })
 }
+

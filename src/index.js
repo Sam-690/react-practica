@@ -13,9 +13,8 @@ import {mainReducer} from './sesion/reducers';
 ReactDOM.render (
     <FirebaseContext.Provider value={new Firebase()}>
         <StateProvider initialState = {initialState} reducer={mainReducer}>
-            <app />
+            <App />
         </StateProvider>
-        <App />
     </FirebaseContext.Provider>
     ,document.getElementById('root'));
 
@@ -25,3 +24,5 @@ ReactDOM.render (
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
+
