@@ -1,5 +1,10 @@
 import React, { Component } from "react";
-import { Toolbar, Typography, IconButton, Drawer, togglerDrawer } from "@material-ui/core";
+import {
+  Toolbar,
+  Typography,
+  IconButton,
+  Drawer
+} from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { Button } from "react-bootstrap";
 import { consumerFirebase } from "../../../server";
@@ -9,7 +14,6 @@ import { salirSesion } from "../../../sesion/actions/sesionAction";
 import { MenuDerecha } from "./menuDerecha";
 import fotoUsuarioTemp from "../../../logo.svg";
 import { withRouter } from "react-router-dom";
-import {whithRouter} from "react-router-dom"
 
 const styles = theme => ({
   sectionDesktop: {
@@ -27,34 +31,17 @@ const styles = theme => ({
   grow: {
     flexGrow: 1
   },
-  avatarsize:{
-      width: 40,
-      height: 40
+  avatarsize: {
+    width: 40,
+    height: 40
   },
   listItemText: {
-      fontsize: "14px",
-      fontWeight: 600,
-      paddingLeft: "15px",
-      color: "#212121"
+    fontsize: "14px",
+    fontWeight: 600,
+    paddingLeft: "15px",
+    color: "#212121"
   }
 });
-
-salirSesionApp = () => {
-    const {firebase} = this.state;
-    const [{sesion}, dispatch] = this.context;
-
-    salirSesion(dispatch, firebase).then(success => {
-        this.props.history.push("/auth/login");
-    })
-}
-
-togglerDrawer = (side, open) => () =>{
-    this.setState(
-        {
-            [side]: open
-        }
-    )
-}
 
 class BarSession extends Component {
   static contextType = StateContext;
@@ -62,6 +49,21 @@ class BarSession extends Component {
   state = {
     firebase: null,
     right: false
+  };
+
+  salirSesionApp = () => {
+    const { firebase } = this.state;
+    const [{ sesion }, dispatch] = this.context;
+
+    salirSesion(dispatch, firebase).then(success => {
+      this.props.history.push("/auth/login");
+    });
+  };
+
+  togglerDrawer = (side, open) => () => {
+    this.setState({
+      [side]: open
+    });
   };
 
   static getDrivedStateFromProps(nextProps, prevState) {
@@ -110,8 +112,10 @@ class BarSession extends Component {
             <Button>Login</Button>
           </div>
           <div className={classes.sectionMobile}>
-            <IconButton color="inherit">
-                onClick = {this.togglerDrawer("right", true)}
+            <IconButton
+              color="inherit"
+              onClick={this.togglerDrawer("right", true)}
+            >
               <i className="material-icons">more_vert</i>
             </IconButton>
           </div>
