@@ -3,7 +3,8 @@ import {
   Toolbar,
   Typography,
   IconButton,
-  Drawer
+  Drawer,
+  Avatar
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { Button } from "react-bootstrap";
@@ -12,6 +13,8 @@ import { compose } from "recompose";
 import { StateContext } from "../../../sesion/store";
 import { salirSesion } from "../../../sesion/actions/sesionAction";
 import { MenuDerecha } from "./menuDerecha";
+import { MenuIzquierda } from "./menuIzquierda";
+import { Link } from "react-router-dom";
 import fotoUsuarioTemp from "../../../logo.svg";
 import { withRouter } from "react-router-dom";
 
@@ -40,6 +43,9 @@ const styles = theme => ({
     fontWeight: 600,
     paddingLeft: "15px",
     color: "#212121"
+  },
+  list: {
+    width: 250
   }
 });
 
@@ -48,7 +54,8 @@ class BarSession extends Component {
 
   state = {
     firebase: null,
-    right: false
+    right: false,
+    left: false
   };
 
   salirSesionApp = () => {
@@ -66,7 +73,7 @@ class BarSession extends Component {
     });
   };
 
-  static getDrivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     let nuveosObjetos = {};
 
     if (nextProps.firebase !== prevState.firebase) {
@@ -102,14 +109,40 @@ class BarSession extends Component {
             />
           </div>
         </Drawer>
+
+        <Drawer
+          open={this.state.left}
+          onClose={this.togglerDrawer("left", false)}
+          anchor="left"
+        >
+          <div
+            role="button"
+            onClick={this.togglerDrawer("left", false)}
+            onKeyDown={this.togglerDrawer("left", false)}
+          >
+            <MenuIzquierda classes={classes} />
+          </div>
+        </Drawer>
+
         <Toolbar>
-          <IconButton color="inherit">
+          <IconButton
+            color="inherit"
+            onClick={this.togglerDrawer("left", true)}
+          >
             <i className="material-icons">menu</i>
           </IconButton>
+
           <Typography variants="h6">Century Inmobiliaria</Typography>
           <div className={classes.grow}></div>
           <div className={classes.sectionDesktop}>
-            <Button>Login</Button>
+            <IconButton color="inherit" component={Link} to="">
+              <i className="material-icons">mail_outline</i>
+            </IconButton>
+            <Button color="inherit" onClick={this.salirSesionApp}>
+              Salir
+            </Button>
+            <Button color="inherit">{textoUsuario}</Button>
+            <Avatar srv={fotoUsuarioTemp}></Avatar>
           </div>
           <div className={classes.sectionMobile}>
             <IconButton

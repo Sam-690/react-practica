@@ -12,16 +12,15 @@ import Login from "./components/security/Login";
 import { FirebaseContext } from "./server";
 
 import { useStateValue } from "./sesion/store";
-// import openSnackbar from "./sesion/actions/snackbarAction"
-// import openSnackbarReducer from "./sesion/reducers/openSnackbarReducer";
+import RutaAutenticada from "./components/security/RutaAutenticada";
+import PerfilUsuario from "./components/security/perfilUsuario";
 
 function App(props) {
   let firebase = React.useContext(FirebaseContext);
   const [autenticacionIniciada, setupFirebaseInicial] = React.useState(false);
 
   const [{ openSnackbar }, dispatch] = useStateValue();
-  
-  // console.log('openSnacknar=====================>>>', openSnackbar)
+
   useEffect(() => {
     firebase.estaIniciado().then(val => {
       setupFirebaseInicial(val);
@@ -58,7 +57,18 @@ function App(props) {
 
           <Grid container>
             <Switch>
-              <Route exact path="/" component={ListaInmuebles}></Route>
+              <RutaAutenticada
+                exact
+                path="/"
+                autenticadoFirebase={firebase.auth.currentUser}
+                component={ListaInmuebles}
+              />
+              <RutaAutenticada
+                exact
+                path="/auth/perfil"
+                autenticadoFirebase={firebase.auth.currentUser}
+                component={PerfilUsuario}
+              />
               <Route
                 exact
                 path="/auth/registrarUsuario"

@@ -28,12 +28,12 @@ const style = {
   }
 };
 
- const usuarioInicial = {
-   nombre: '',
-   apellidos:'',
-   email:'',
-   password:''
- }
+//  const usuarioInicial = {
+//    nombre: '',
+//    apellidos:'',
+//    email:'',
+//    password:''
+//  }
 
 class RegistrarUsuarios extends Component {
   static contextType = StateContext;

@@ -19,6 +19,7 @@ class firebase {
         app.initializeApp(config);
         this.db = app.firestore();
         this.auth = app.auth();
+        this.storage = app.storage ();
     }
     
     estaIniciado() {
@@ -26,6 +27,10 @@ class firebase {
         this.auth.onAuthStateChanged(resolve)
       })
     }
+
+    guardarDocumento = (nombreDocumento, documento) => this.storage.ref().child(nombreDocumento).put(documento);
+
+    devolverDocumento = (documentoUrl) => this.storage.ref().child(documentoUrl).getDownloadURL();
 
 }
 
