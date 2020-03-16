@@ -142,7 +142,7 @@ class BarSession extends Component {
               Salir
             </Button>
             <Button color="inherit">{textoUsuario}</Button>
-            <Avatar srv={fotoUsuarioTemp}></Avatar>
+            <Avatar srv={usuario.foto || fotoUsuarioTemp}></Avatar>
           </div>
           <div className={classes.sectionMobile}>
             <IconButton

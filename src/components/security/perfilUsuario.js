@@ -12,12 +12,12 @@ import reactFoto from "../../logo.svg";
 import { consumerFirebase } from "../../server";
 import { openMensajePantalla } from "../../sesion/actions/snackbarAction";
 import ImageUploader from "react-images-upload";
-import uuid from 'uuid';
+import*as uuid from 'uuid';
 
 const style = {
   paper: {
     marginTop: 8,
-    display: "flex",
+    display: "flex",  
     flexDirection: "column",
     alignItems: "center"
   },
@@ -130,6 +130,8 @@ const PerfilUsuario = props => {
           })
       })
   };
+
+  let fotoKey = uuid.v4();
 
   return sesion ? (
     <Container component="main" maxWidth="md" justify="center">
