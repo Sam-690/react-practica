@@ -1,4 +1,4 @@
-import React, { component, Component } from "react";
+import React, { Component } from "react";
 import {
   Container,
   Paper,
@@ -9,16 +9,16 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Table
+  Table,
+  Breadcrumbs
 } from "@material-ui/core";
-import { Breadcrumb } from "react-bootstrap";
 import HomeIcon from "@material-ui/icons/Home";
 import { consumerFirebase } from "../../server";
 import { openMensajePantalla } from "../../sesion/actions/snackbarAction";
 import ImageUploader from "react-images-upload";
 import * as uuid from "uuid";
 import { crearKeyword } from "../../sesion/actions/KeyWord";
-import inmueble from "./ListaInmuebles";
+// import inmueble from "./ListaInmuebles";
 
 const style = {
   container: {
@@ -79,8 +79,8 @@ class NuevoInmueble extends Component {
     });
   };
 
-  guardarInmueble = () => {
-    const { archivos, inmuebles } = this.state;
+  guardarInmuebles = () => {
+    const { archivos, inmueble } = this.state;
 
     //crear un alias a cada archivo, con el cual se invocara, el mismo alias sera almacenado en la base de datos firebase
 
@@ -107,6 +107,7 @@ class NuevoInmueble extends Component {
     this.props.firebase.guardarDocumentos(archivos).then(arregloUrls => {
       inmueble.fotos = arregloUrls;
       inmueble.keywords = keywords;
+      inmueble.propietario = this.props.firebase.auth.currentUser.uid;
 
       this.props.firebase.db
         .collection("Inmuebles")
@@ -136,13 +137,13 @@ class NuevoInmueble extends Component {
         <Paper style={style.paper}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={8}>
-              <Breadcrumb aria-label="breadcrumb">
+              <Breadcrumbs aria-label="breadcrumbs">
                 <Link color="inherit" style={style.link} href="/">
                   <HomeIcon sytle={style.homeIcon} />
                   Home
                 </Link>
                 <typography color="textPrimary">Nuevo Inmueble</typography>
-              </Breadcrumb>
+              </Breadcrumbs>
             </Grid>
             <Grid item xs={12} md={12}>
               <TextField
@@ -236,7 +237,7 @@ class NuevoInmueble extends Component {
                 size="large"
                 color="primary"
                 style={style.submit}
-                onClick={this.guardarInmueble}
+                onClick={this.guardarInmuebles}
               >
                 Guardar
               </Button>

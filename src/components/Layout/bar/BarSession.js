@@ -4,10 +4,10 @@ import {
   Typography,
   IconButton,
   Drawer,
-  Avatar
+  Avatar,
+  Button
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import { Button } from "react-bootstrap";
 import { consumerFirebase } from "../../../server";
 import { compose } from "recompose";
 import { StateContext } from "../../../sesion/store";
@@ -86,7 +86,11 @@ class BarSession extends Component {
     const { classes } = this.props;
     const [{ sesion }, dispatch] = this.context;
     const { usuario } = sesion;
+
     let textoUsuario = usuario.nombre + " " + usuario.apellido;
+    if (!usuario.nombre) {
+      textoUsuario = usuario.telefono;
+    }
 
     return (
       <div>
@@ -104,7 +108,7 @@ class BarSession extends Component {
               classes={classes}
               usuario={usuario}
               textoUsuario={textoUsuario}
-              fotoUsuario={fotoUsuarioTemp}
+              fotoUsuario={usuario.foto || fotoUsuarioTemp}
               salirSesion={this.salirSesionApp}
             />
           </div>
@@ -142,7 +146,7 @@ class BarSession extends Component {
               Salir
             </Button>
             <Button color="inherit">{textoUsuario}</Button>
-            <Avatar srv={usuario.foto || fotoUsuarioTemp}></Avatar>
+            <Avatar src={usuario.foto || fotoUsuarioTemp}></Avatar>
           </div>
           <div className={classes.sectionMobile}>
             <IconButton

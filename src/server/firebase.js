@@ -21,6 +21,7 @@ class firebase {
         this.db = app.firestore();
         this.auth = app.auth();
         this.storage = app.storage ();
+        this.authorization = app.auth;
 
         this.storage.ref().constructor.prototype.guardarDocumentos = function(documentos){
           var ref=this;
@@ -44,7 +45,11 @@ class firebase {
 
     guardarDocumentos = (documentos) => this.storage.ref().guardarDocumentos(documentos);
 
+    eliminarDocumento = documento => this.storage.ref().child(documento).delete();
+
 }
 
 
 export default firebase;
+
+

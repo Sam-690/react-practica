@@ -79,11 +79,16 @@ const PerfilUsuario = props => {
       });
   };
 
+  const validarEstadoFormulario = sesion =>{
+    if (sesion) {
+      cambiarEstado(sesion.usuario);
+    }
+  }
+
+
   useEffect(() => {
     if (estado.id === "") {
-      if (sesion) {
-        cambiarEstado(sesion.usuario);
-      }
+      validarEstadoFormulario(sesion);
     }
   });
 

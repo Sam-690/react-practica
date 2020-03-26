@@ -15,7 +15,9 @@ import { useStateValue } from "./sesion/store";
 import RutaAutenticada from "./components/security/RutaAutenticada";
 import PerfilUsuario from "./components/security/perfilUsuario";
 import NuevoInmueble from "./components/vistas/NuevoInmueble";
-
+import EditarInmuebles from "./components/vistas/EditarInmuebles"
+import loginTelefono from "./components/security/loginTelefono";
+ 
 function App(props) {
   let firebase = React.useContext(FirebaseContext);
   const [autenticacionIniciada, setupFirebaseInicial] = React.useState(false);
@@ -76,12 +78,19 @@ function App(props) {
                 autenticadoFirebase={firebase.auth.currentUser}
                 component={NuevoInmueble}
               />
+              <RutaAutenticada
+                exact
+                path="/inmueble/:id"
+                autenticadoFirebase={firebase.auth.currentUser}
+                component={EditarInmuebles}
+              />
               <Route
                 exact
-                path="/auth/registrarUsuario"
+                path="/auth/registrarUsuario" 
                 component={RegistrarUsuarios}
               ></Route>
               <Route exact path="/auth/login" component={Login}></Route>
+              <Route exact path="/auth/loginTelefono" component={loginTelefono} />
             </Switch>
           </Grid>
         </MuiThemeProvider>
