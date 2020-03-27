@@ -1,3 +1,13 @@
+export const refrescarSesion = (firebase) => {
+    return new Promise ((resolve, eject) => {
+
+        firebase.auth.onAuthStateChanged(user =>{
+            user.getIdTpken(true);
+            resolve();
+        })
+    })
+}
+
 export const iniciarSesion = (dispatch, firebase, email, password) => {
   return new Promise((resolve, eject) => {
     firebase.auth.signInWithEmailAndPassword(email, password)

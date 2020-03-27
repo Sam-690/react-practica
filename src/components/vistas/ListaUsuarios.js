@@ -16,12 +16,14 @@ import {
   DialogActions
 } from "@material-ui/core";
 import { useSelector, useDispatch } from "react-redux";
-import { obtenerUsuariosApp } from "../../Redux/actions/usuarioAction";
+import { obtenerUsuariosApp, actualizarRoles } from "../../Redux/actions/usuarioAction";
 import { enviarCorreoElectronico } from "../../Redux/actions/emailAction";
 
 
 import {useStateValue} from "../../sesion/store"
 import {openMensajePantalla} from "../../sesion/actions/snackbarAction"
+import { refrescarSesion } from "../../sesion/actions/sesionAction";
+import { consumerFirebase } from "../../server";
 
 const style = {
   paper: {
@@ -92,6 +94,99 @@ const ListaUsuarios = props => {
     cambiarSelectRole(event.target.value);
   }
 
+  const agreagarRol = async() => {
+    if(!usuarioDialog.roles){
+      usuarioDialog.roles = [];
+    }
+
+    let existeRole = usuarioDialog.roles.filter(
+      rol => rol.nombre === selectRole
+    );
+
+    if(!existeRole.length===0){
+      // autenticacion firebase // custom claims // {nombreRol: estadoRol, otroRol : true, extraRol: true}
+
+      /**CREACION DEL CUSTOM CLAIM*/
+      const customClaims = {};
+      usuarioDialog.roles.map(_role=>{
+        Object.defineProperty(customClaims, _role.nombre, {
+          value: _role.estado,
+          writable: true,
+          enumerable: true,
+          configurable: true        
+        })
+      })
+
+      Object.defineProperty(customClaims, selectRole, {
+        value: true,
+        writable: true,
+        enumerable: true,
+        configurable: true
+      })
+      /**FIN DE LA CREACION DEL CUSTOM CLAIM*/
+
+      usuarioDialog.roles.push({nombre:selectRole, estado:true})
+
+      const respuesta =  await actualizarRoles(dispatchRedux, usuarioDialog, customClaims);
+      console.log(respuesta);
+      obtenerUsuariosApp(dispatchRedux)
+
+      refrescarSesion(props.firebase);
+      
+      openMensajePantalla(dispatch,{
+        open: true,
+        mensaje: "Se guardo exitosamente el rol del usuario"
+      })
+
+
+    //customclaims = {ADMIN: TRUE, OPERADOR: TRUE, USUARIO: TRUE}
+
+
+      //firestore // collection("users") // arreglo:
+      // {"nombre": "admin","estado:true"}
+      // {"nombre": "otroRol","estado:true"}
+      // {"nombre": "extraRol","estado:true"}
+    }
+  }
+
+  const removerRol = async rol => {
+
+    const nuevoArregloRoles = usuarioDialog.roles.filter(currentRol => currentRol.nombre !== rol);
+
+    usuarioDialog.roles = nuevoArregloRoles;
+
+    const customClaims = {}
+    nuevoArregloRoles.map( _rol => {
+      Object.defineProperty(customClaims, _rol.nombre, {
+        value: _rol.estado,
+        writable: true,
+        enumerable: true,
+        configurable: true
+      })
+    })
+
+    Object.defineProperty(customClaims, rol, {
+      value: false,
+      writable: true,
+      enumerable: true,
+      configurable: true
+    })
+
+    const respuesta = actualizarRoles(dispatchRedux, usuarioDialog, customClaims)
+    console.log(respuesta);
+
+    obtenerUsuariosApp(dispatchRedux);
+    refrescarSesion(props.firebase);
+
+
+    openMensajePantalla(dispatch, {
+      open: true,
+      mensaje: "Se elimino rol seleccionado"
+    })
+
+
+  }
+
   return (
     <Container style={style.container}>
       <Dialog
@@ -113,7 +208,26 @@ const ListaUsuarios = props => {
               </Select>
             </Grid>
             <Grid item xs={6} sm={6}>
-              <Button color="secondary" variant="contained">Agregar</Button>
+              <Button color="secondary" variant="contained" onClick={()=>agreagarRol()}>Agregar</Button>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <Table>
+                <TableBody>
+                  {usuarioDialog.roles
+                  ? usuarioDialog.roles.map((role, i) => (
+                    <TableRow key={i}>
+                      <TableCell align="left">{role.nombre}</TableCell>
+                      <TableCell align="left">
+                        <Button variant="contained" color="primary" size="small" onClick={() => removerRol(role.nombre)}>
+                          Eliminar
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                  :null
+                  }
+                </TableBody>
+              </Table>
             </Grid>
           </Grid>
         </DialogContent>
@@ -170,4 +284,4 @@ const ListaUsuarios = props => {
   );
 };
 
-export default ListaUsuarios;
+export default consumerFirebase(ListaUsuarios);
