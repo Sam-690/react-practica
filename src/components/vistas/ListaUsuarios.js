@@ -24,6 +24,7 @@ import {useStateValue} from "../../sesion/store"
 import {openMensajePantalla} from "../../sesion/actions/snackbarAction"
 import { refrescarSesion } from "../../sesion/actions/sesionAction";
 import { consumerFirebase } from "../../server";
+import {enviarNotification} from "../../sesion/actions/notificationsAction"
 
 const style = {
   paper: {
@@ -94,7 +95,15 @@ const ListaUsuarios = props => {
     cambiarSelectRole(event.target.value);
   }
 
-  const agreagarRol = async() => {
+  const agregarRol = async() => {
+
+    if(selectRole === "0"){
+      openMensajePantalla(dispatch, {
+        open: true,
+        mensaje:"Seleccione un rol valido"
+      })
+      return;
+    }
     if(!usuarioDialog.roles){
       usuarioDialog.roles = [];
     }
@@ -187,6 +196,27 @@ const ListaUsuarios = props => {
 
   }
 
+      const enviarPushNotification = usuarioFila => {
+        if (props.firebase.messagingValidation.isSupported()) {
+          const listaToken = usuarioFila.tokenArreglo;
+          const obj = {
+            token: listaToken || []
+          };
+
+          enviarNotification(obj).then(respuestaServidor => {
+            openMensajePantalla(dispatch, {
+              open: true,
+              mensaje: respuestaServidor.data.mensaje
+            });
+          });
+        } else {
+          openMensajePantalla(dispatch, {
+            open: true,
+            mensaje: "Esta version de browser no soporta push notifications"
+          });
+        }
+      };
+
   return (
     <Container style={style.container}>
       <Dialog
@@ -208,31 +238,48 @@ const ListaUsuarios = props => {
               </Select>
             </Grid>
             <Grid item xs={6} sm={6}>
-              <Button color="secondary" variant="contained" onClick={()=>agreagarRol()}>Agregar</Button>
+              <Button
+                color="secondary"
+                variant="contained"
+                onClick={() => agregarRol()}
+              >
+                Agregar
+              </Button>
             </Grid>
             <Grid item xs={12} sm={12}>
               <Table>
                 <TableBody>
                   {usuarioDialog.roles
-                  ? usuarioDialog.roles.map((role, i) => (
-                    <TableRow key={i}>
-                      <TableCell align="left">{role.nombre}</TableCell>
-                      <TableCell align="left">
-                        <Button variant="contained" color="primary" size="small" onClick={() => removerRol(role.nombre)}>
-                          Eliminar
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                  :null
-                  }
+                    ? usuarioDialog.roles.map((role, i) => (
+                        <TableRow key={i}>
+                          <TableCell align="left">{role.nombre}</TableCell>
+                          <TableCell align="left">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              size="small"
+                              onClick={() => removerRol(role.nombre)}
+                            >
+                              Eliminar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    : null}
                 </TableBody>
               </Table>
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={() => {abreDialog(false)}}>Cerrar</Button>
+          <Button
+            color="primary"
+            onClick={() => {
+              abreDialog(false);
+            }}
+          >
+            Cerrar
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -249,7 +296,9 @@ const ListaUsuarios = props => {
                         </TableCell>
                         <TableCell align="left">
                           {row.nombre
-                            ? row.nombre + " " + row.apellido
+                            ? row.nombre +
+                              " " +
+                              (row.apellido ? row.apellido : row.apellidos)
                             : "No tiene nombre"}
                         </TableCell>
                         <TableCell>
@@ -260,6 +309,16 @@ const ListaUsuarios = props => {
                             onClick={() => abrirDialogConUsuario(row)}
                           >
                             Roles
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            onClick={() => enviarPushNotification(row)}
+                          >
+                            Notificacion
                           </Button>
                         </TableCell>
                         <TableCell>

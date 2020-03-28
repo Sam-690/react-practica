@@ -22,6 +22,7 @@ import loginTelefono from "./components/security/loginTelefono";
 import store from './Redux/store';
 import {Provider} from 'react-redux';
 import ListaUsuarios from "./components/vistas/ListaUsuarios";
+import {openMensajePantalla} from './sesion/actions/snackbarAction'
 
 function App(props) {
   let firebase = React.useContext(FirebaseContext);
@@ -33,6 +34,16 @@ function App(props) {
     firebase.estaIniciado().then(val => {
       setupFirebaseInicial(val);
     });
+
+    if (firebase.messagingValidation.isSupported()) {
+      firebase.messaging.onMessage(payload => {
+        openMensajePantalla(dispatch, {
+          open: true,
+          mensaje: payload.notification.title + ". " + payload.notification.body
+        });
+      });
+    }
+
   });
 
   return autenticacionIniciada !== false ? (

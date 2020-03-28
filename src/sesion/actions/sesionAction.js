@@ -2,7 +2,7 @@ export const refrescarSesion = (firebase) => {
     return new Promise ((resolve, eject) => {
 
         firebase.auth.onAuthStateChanged(user =>{
-            user.getIdTpken(true);
+            user.getIdToken(true);
             resolve();
         })
     })

@@ -3,7 +3,7 @@ const initalState = {
 }
 
 export default function (state = initalState, action){
-    switch(action.tye){
+    switch(action.type){
         case "LISTA_USUARIOS" :
             return {
                 ...state,

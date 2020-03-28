@@ -17,6 +17,7 @@ import { MenuIzquierda } from "./menuIzquierda";
 import { Link } from "react-router-dom";
 import fotoUsuarioTemp from "../../../logo.svg";
 import { withRouter } from "react-router-dom";
+import { obtenerPermisoNotification } from "../../../sesion/actions/notificationsAction";
 
 const styles = theme => ({
   sectionDesktop: {
@@ -82,12 +83,25 @@ class BarSession extends Component {
     return nuveosObjetos;
   }
 
+  recibirNotificaciones = async () => {
+    const { firebase } = this.state;
+    const [{ sesion }, dispatch] = this.context;
+    const { usuario } = sesion;
+
+    if (firebase.messagingValidation.isSupported()) {
+      await obtenerPermisoNotification(firebase, usuario, dispatch);
+    }
+  };
+
   render() {
     const { classes } = this.props;
     const [{ sesion }, dispatch] = this.context;
     const { usuario } = sesion;
 
-    let textoUsuario = usuario.nombre + " " + usuario.apellido;
+    let textoUsuario =
+      usuario.nombre +
+      " " +
+      (usuario.apellido ? usuario.apellido : usuario.apellidos);
     if (!usuario.nombre) {
       textoUsuario = usuario.telefono;
     }
@@ -124,7 +138,10 @@ class BarSession extends Component {
             onClick={this.togglerDrawer("left", false)}
             onKeyDown={this.togglerDrawer("left", false)}
           >
-            <MenuIzquierda classes={classes} />
+            <MenuIzquierda
+              classes={classes}
+              obtenerPermisoNotification={this.recibirNotificaciones}
+            />
           </div>
         </Drawer>
 

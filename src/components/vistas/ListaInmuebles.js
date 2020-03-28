@@ -46,7 +46,7 @@ const style = {
     flexDirection: "column"
   },
   cardMedia: {
-    paddingTop: "56.25"
+    paddingTop: "56.25%"
   },
   cardContent: {
     flexGrow: 1

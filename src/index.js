@@ -9,13 +9,31 @@ import {initialState} from './sesion/initialState';
 import {StateProvider} from './sesion/store';
 import {mainReducer} from './sesion/reducers';
 
+const firebase = new Firebase();
+
 ReactDOM.render (
-    <FirebaseContext.Provider value={new Firebase()}>
+    <FirebaseContext.Provider value={firebase}>
         <StateProvider initialState = {initialState} reducer={mainReducer}>
             <App />
         </StateProvider>
     </FirebaseContext.Provider>
     ,document.getElementById('root'));
+
+
+    if(firebase.messagingValidation.isSupported()){
+
+        if("serviceWorker" in navigator){
+            navigator.serviceWorker
+                .register("/firebase.messaging-sw.js")
+                .then(registration => {
+                    console.log("Registacion completa en el service worker", registration.scope);
+                })
+                .catch(err => {
+                    console.log("Fallo en registrar en el service worker")
+                })
+        }
+    }
+
 
 // ReactDOM.render(<App />, document.getElementById('root'));
 
